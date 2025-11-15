@@ -6,6 +6,8 @@
   "repository": "https://github.com/iarejerk/ferdium-recipes-fetlife",
   "config": {
     "serviceURL": "https://fetlife.com/inbox",
-    "hasNotificationSound": true
-  }
+    "hasNotificationSound": true,
+    "hasIndirectMessages": true
+  },
+  "defaultIcon": "https://fetlife.com/favicons/favicon.ico"
 }

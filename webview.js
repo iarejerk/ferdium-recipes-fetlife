@@ -5,26 +5,36 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = Ferdi => {
-  Ferdi.injectCSS(_path.default.join(__dirname, 'style.css'));
-
   const getMessages = function getMessages() {
     let count = 0;
 
-    // Read from the inbox icon in the top navigation
-    const notificationEl = document.querySelector('span[data-inbox-count] div');
-    if (!!notificationEl) {
-      count = notificationEl.innerText;
+    const selectors = [
+      'div.bg-red-700'
+    ];
+
+    const safeParseInt = s => {
+      if (!s && s !== 0) return 0;
+      const n = parseInt(String(s).trim().replace(/[^0-9-]/g, ''), 10);
+      return Number.isNaN(n) ? 0 : n;
+    };
+
+    const allMatches = selectors.flatMap(sel => [...document.querySelectorAll(sel)]);
+
+    for (const el of allMatches) {
+      const text = (el.textContent || el.innerText || '').trim();
+      if (text) {
+        count += safeParseInt(text);
+      }
     }
 
-    // Just incase we don't end up with a number, set it back to zero (parseInt can return NaN)
-    count = parseInt(count, 10);
-    if (isNaN(count)) {
-      count = 0;
-    }
-
-    // set Franz badge
-    Ferdi.setBadge(count);
+    Ferdi.setBadge(count > 100 ? '99+' : count);
   };
 
+  window.addEventListener('beforeunload', async () => {
+    Ferdium.releaseServiceWorkers();
+  });
+
   Ferdi.loop(getMessages);
+
+  Ferdi.injectCSS(_path.default.join(__dirname, 'style.css'));
 };
